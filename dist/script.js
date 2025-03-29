@@ -1,60 +1,50 @@
+"use strict";
 // Obtener referencias a los elementos del DOM
-const lista = document.getElementById("lista") as HTMLUListElement;
-const itemInput = document.getElementById("itemInput") as HTMLInputElement;
-
-// Definición de la interfaz para un Item
-interface Item {
-    id: number;
-    descripcion: string;
-}
-
+const lista = document.getElementById("lista");
+const itemInput = document.getElementById("itemInput");
 // Cargar la lista desde el servidor
-function cargarLista(): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+function cargarLista() {
+    return new Promise((resolve, reject) => {
         fetch("http://localhost:3000/items")
             .then(response => response.json())
-            .then((data: { items: Item[] }) => {
-                lista.innerHTML = ""; // Limpiar la lista antes de renderizar
-                data.items.forEach(item => renderizarItem(item));
-                resolve();
-            })
+            .then((data) => {
+            lista.innerHTML = ""; // Limpiar la lista antes de renderizar
+            data.items.forEach(item => renderizarItem(item));
+            resolve();
+        })
             .catch(error => reject("Error al cargar la lista"));
     });
 }
-
 // Agregar un nuevo item
-function agregarItem(): Promise<void> {
+function agregarItem() {
     const item = itemInput.value.trim();
-    if (!item) return Promise.resolve();
+    if (!item)
+        return Promise.resolve();
     itemInput.value = "";
-
     const itemNormalizado = item.toLowerCase();
     // Verificar si ya existe en la lista
     const itemsExistentes = Array.from(document.querySelectorAll("#lista li span"))
         .map(span => (span.textContent || "").trim().toLowerCase());
-
     if (itemsExistentes.includes(itemNormalizado)) {
         alert("Este producto ya está en la lista.");
         return Promise.resolve();
     }
-
-    return new Promise<void>((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         fetch("http://localhost:3000/items", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ descripcion: item })
         })
             .then(response => response.json())
-            .then((data: Item) => {
-                renderizarItem(data);
-                resolve();
-            })
+            .then((data) => {
+            renderizarItem(data);
+            resolve();
+        })
             .catch(error => reject("Error al agregar item"));
     });
 }
-
 // Renderizar un item en la lista
-function renderizarItem(item: Item): void {
+function renderizarItem(item) {
     const li = document.createElement("li");
     li.innerHTML = `
         <span id="${item.id}">${item.descripcion}</span> 
@@ -63,27 +53,26 @@ function renderizarItem(item: Item): void {
     `;
     lista.appendChild(li);
 }
-
 // Eliminar un item
-function eliminarItem(id: number, boton: HTMLButtonElement): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+function eliminarItem(id, boton) {
+    return new Promise((resolve, reject) => {
         fetch(`http://localhost:3000/items/${id}`, { method: "DELETE" })
             .then(response => response.json())
             .then(() => {
-                boton.parentElement?.remove();
-                resolve();
-            })
+            var _a;
+            (_a = boton.parentElement) === null || _a === void 0 ? void 0 : _a.remove();
+            resolve();
+        })
             .catch(error => reject("Error al eliminar item"));
     });
 }
-
-function editarItem(id: number, boton: HTMLButtonElement): void {
-    const span = boton.parentElement?.querySelector("span");
-    const textoActual = span ? span.textContent?.trim() : '';
+function editarItem(id, boton) {
+    var _a, _b;
+    const span = (_a = boton.parentElement) === null || _a === void 0 ? void 0 : _a.querySelector("span");
+    const textoActual = span ? (_b = span.textContent) === null || _b === void 0 ? void 0 : _b.trim() : '';
     const nuevoTexto = prompt("Editar item:", textoActual || "");
-
-    if (!nuevoTexto) return;
-
+    if (!nuevoTexto)
+        return;
     fetch(`http://localhost:3000/items/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -91,12 +80,11 @@ function editarItem(id: number, boton: HTMLButtonElement): void {
     })
         .then(response => response.json())
         .then(() => {
-            if (span) {
-                span.textContent = nuevoTexto;
-            }
-        })
+        if (span) {
+            span.textContent = nuevoTexto;
+        }
+    })
         .catch(error => console.error("Error al editar item", error));
 }
-
 // Cargar la lista al iniciar
 cargarLista().catch(error => console.error(error));
