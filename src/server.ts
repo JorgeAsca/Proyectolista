@@ -1,11 +1,15 @@
-import express, { Request, Response } from 'express';
-import cors from 'cors';
+// Importaciones de modulos 
+import express, { Request, Response } from 'express'; // Crea app web en node.js
+import cors from 'cors'; // 
 import fs from 'fs';
 import path from 'path';
 
 const app = express();
+//Crea una instancia de la aplicación Express. Esta instancia (`app`) es el corazón de nuestro servidor web.
+// Definicion de el puerto 
 const PORT = 3000;
 
+// Define la estructura del el "Item" en la Lista.jsom 
 interface Item {
   id: number;
   descripcion: string;
@@ -15,12 +19,12 @@ interface ListaItems {
   items: Item[];
 }
 
-
+// Configuracionde Middleware = Software que permite la comucicacion entre apps y S.O
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(process.cwd(), 'public')));
+app.use(express.static(path.join(process.cwd(), 'public'))); // Comstruye la ruta absoluta que contiene archivos estaticos
 
-
+// Rutas de la Api De
 app.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(process.cwd(), 'views', 'index.html'));
 });
