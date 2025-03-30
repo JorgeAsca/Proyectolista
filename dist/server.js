@@ -33,6 +33,7 @@ app.get('/items', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.json(data);
     }
     catch (error) {
+        console.error("Error al leer el archivo JSON:", error);
         res.status(500).json({ error: 'Error al leer el archivo' });
     }
 }));
@@ -51,6 +52,7 @@ app.post('/items', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.json(nuevoItem);
     }
     catch (error) {
+        console.error("Error al agregar el item:", error);
         res.status(500).json({ error: 'Error al agregar el item' });
     }
 }));
@@ -69,6 +71,7 @@ app.delete('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.json({ message: 'Item eliminado' });
     }
     catch (error) {
+        console.error("Error al eliminar el item:", error);
         res.status(500).json({ error: 'Error al eliminar el item' });
     }
 }));
@@ -92,6 +95,7 @@ app.put('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.json({ message: 'Item actualizado' });
     }
     catch (error) {
+        console.error("Error al actualizar el item:", error);
         res.status(500).json({ error: 'Error al actualizar el item' });
     }
 }));
@@ -99,12 +103,15 @@ app.put('/items/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* 
 const leerArchivoJson = () => {
     return new Promise((resolve, reject) => {
         fs_1.default.readFile(path_1.default.join(process.cwd(), 'lista.json'), 'utf8', (err, data) => {
-            if (err)
+            if (err) {
+                console.error("Error al leer el archivo:", err);
                 return reject(err);
+            }
             try {
                 resolve(JSON.parse(data));
             }
             catch (parseError) {
+                console.error("Error al parsear el archivo JSON:", parseError);
                 reject(parseError);
             }
         });
@@ -114,8 +121,10 @@ const leerArchivoJson = () => {
 const escribirArchivoJson = (data) => {
     return new Promise((resolve, reject) => {
         fs_1.default.writeFile(path_1.default.join(process.cwd(), 'lista.json'), JSON.stringify(data, null, 2), 'utf8', (err) => {
-            if (err)
+            if (err) {
+                console.error("Error al escribir el archivo:", err);
                 return reject(err);
+            }
             resolve();
         });
     });
